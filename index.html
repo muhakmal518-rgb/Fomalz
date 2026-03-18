@@ -1,0 +1,195 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOMALZ STORE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#6a00ff; --bg2:#00c3ff; --card:rgba(255,255,255,0.1); --text:#fff;
+    }
+    body.dark{
+      --bg1:#0f172a; --bg2:#020617; --card:rgba(255,255,255,0.06); --text:#e5e7eb;
+    }
+    body {
+      margin: 0; font-family: 'Poppins', sans-serif; color: var(--text);
+      background: linear-gradient(135deg, var(--bg1), var(--bg2)); text-align: center;
+    }header { padding: 20px; position: relative; }
+
+.brand{ font-family:'Orbitron'; font-size:28px; letter-spacing:2px;
+  text-shadow: 0 0 5px #fff, 0 0 10px #00c3ff, 0 0 20px #6a00ff, 0 0 40px #6a00ff;
+  animation: glow 2s infinite alternate;
+}
+
+.logo{ width:100px; margin-bottom:10px; filter: drop-shadow(0 0 5px #00c3ff) drop-shadow(0 0 10px #6a00ff); animation: logoGlow 2s infinite alternate; }
+
+@keyframes logoGlow{ from{ transform: scale(1) rotate(0deg); } to{ transform: scale(1.08) rotate(5deg); filter: drop-shadow(0 0 10px #00c3ff) drop-shadow(0 0 20px #6a00ff); } } to{ transform: scale(1.08); filter: drop-shadow(0 0 10px #00c3ff) drop-shadow(0 0 20px #6a00ff); } }
+
+@keyframes glow{ from{filter:brightness(1);} to{filter:brightness(1.4);} }
+
+.toggle{
+  position:absolute;
+  right:15px;
+  top:15px;
+  background:rgba(0,0,0,0.3);
+  border:none;
+  padding:8px 12px;
+  border-radius:10px;
+  color:white;
+}
+
+.container { padding: 20px; }
+
+.card {
+  background: var(--card);
+  margin: 15px;
+  padding: 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+input, select {
+  padding:12px;
+  margin:10px;
+  width:85%;
+  border-radius:12px;
+  border:none;
+}
+
+button {
+  background: linear-gradient(45deg, #00c3ff, #6a00ff);
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  color: white;
+  font-weight: bold;
+  width:90%;
+  cursor:pointer;
+}
+
+.status{ margin-top:10px; font-weight:bold; }
+
+.loader{
+  display:none;
+  margin:10px auto;
+  border:5px solid #fff;
+  border-top:5px solid transparent;
+  border-radius:50%;
+  width:40px;
+  height:40px;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{ 100%{ transform:rotate(360deg);} }
+
+.invoice{ display:none; text-align:left; }
+.invoice img{ width:100%; margin-top:10px; border-radius:10px; }
+
+  </style>
+</head>
+<body><header>
+  <button class="toggle" onclick="toggleDark()">🌙</button>
+  <img class="logo" src="punya malz.png">
+  <div class="brand">FOMALZ STORE</div>
+</header><div class="container">  <div class="card">
+    <h3>Order Followers</h3><input type="text" id="username" placeholder="Username">
+
+<select id="platform">
+  <option>Instagram</option>
+  <option>TikTok</option>
+</select>
+
+<select id="jumlah" onchange="setHarga()">
+  <option value="">Pilih Paket</option>
+  <option value="5000">50 Followers - Rp5.000</option>
+  <option value="10000">100 Followers - Rp10.000</option>
+  <option value="40000">500 Followers - Rp40.000</option>
+  <option value="70000">1000 Followers - Rp70.000</option>
+</select>
+
+<p id="harga">Harga: -</p>
+
+<select id="pembayaran">
+  <option>DANA</option>
+  <option>OVO</option>
+  <option>GOPAY</option>
+</select>
+
+<p>Upload Bukti Transfer:</p>
+<input type="file" id="bukti" accept="image/*" onchange="previewBukti()">
+<img id="preview" style="display:none; width:80%; border-radius:10px; margin-top:10px;">
+
+<button onclick="order()">Order Sekarang</button>
+
+<div class="loader" id="loader"></div>
+<div class="status" id="status"></div>
+
+  </div>  <div class="card">
+    <h3>Pembayaran</h3>
+    <p>DANA: 0821-5229-2305</p>
+    <p>OVO: 0821-5229-2305</p>
+    <p>GOPAY: 0821-5229-2305</p>
+  </div>  <div class="card invoice" id="invoice">
+    <h3>INVOICE</h3>
+    <p id="invData"></p>
+    <img id="invBukti">
+  </div></div><audio id="klik" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+
+<script>
+function toggleDark(){ document.body.classList.toggle('dark'); }
+
+function setHarga(){
+  let harga = document.getElementById('jumlah').value;
+  document.getElementById('harga').innerText = 'Harga: Rp'+harga;
+}
+
+function previewBukti(){
+  let file = document.getElementById('bukti').files[0];
+  let reader = new FileReader();
+  reader.onload = function(e){
+    let img = document.getElementById('preview');
+    img.src = e.target.result;
+    img.style.display='block';
+  }
+  if(file) reader.readAsDataURL(file);
+}
+
+function order(){
+  document.getElementById('klik').play();
+
+  let username = document.getElementById('username').value;
+  let jumlahText = document.getElementById('jumlah').options[document.getElementById('jumlah').selectedIndex].text;
+  let harga = document.getElementById('jumlah').value;
+  let pembayaran = document.getElementById('pembayaran').value;
+  let platform = document.getElementById('platform').value;
+  let buktiImg = document.getElementById('preview').src;
+
+  if(!username || !harga){ alert('Lengkapi data!'); return; }
+
+  document.getElementById('loader').style.display='block';
+  document.getElementById('status').innerText='Processing...';
+
+  setTimeout(()=>{
+    document.getElementById('loader').style.display='none';
+    document.getElementById('status').innerText='Status: Sukses ✅';
+
+    document.getElementById('invoice').style.display='block';
+    document.getElementById('invData').innerHTML = `
+      Username: ${username}<br>
+      Platform: ${platform}<br>
+      Paket: ${jumlahText}<br>
+      Harga: Rp${harga}<br>
+      Pembayaran: ${pembayaran}<br>
+      Status: Sukses
+    `;
+
+    document.getElementById('invBukti').src = buktiImg;
+
+    let pesan = `ORDER FOMALZ%0AUsername:${username}%0APlatform:${platform}%0APaket:${jumlahText}%0AHarga:Rp${harga}%0APembayaran:${pembayaran}%0AStatus:Sukses`;
+    window.open('https://wa.me/6282152292305?text='+pesan,'_blank');
+
+  },3000);
+}
+</script></body>
+</html>
